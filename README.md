@@ -13,3 +13,4 @@ Abstract: *We consider the problem of active portfolio management where a loss-a
 The code generates optimal portfolios allocations with CoIn, Gumbel, and no copula constraints for the stochastic interest rate - constant elasticity of variance model.
 
 Please click on the WassersteinBall.ipynb and, if you wish, click on the colab link at the top to run the code live.
+  
