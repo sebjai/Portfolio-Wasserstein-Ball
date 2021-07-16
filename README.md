@@ -1,14 +1,9 @@
 This is the code for implementing the results in the paper:
 
 Title: **Portfolio Optimisation within a Wasserstein Ball**
-
-by
-
-Silvana Pesenti and Sebastian Jaimungal
-
-Department of Statistica Sciences
-
-University of Toronto
+by    
+Silvana Pesenti and Sebastian Jaimungal    
+Department of Statistical Sciences, University of Toronto
 
 https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3744994
 
