@@ -1,1 +1,126 @@
-import numpy as np #line:1from SIR_CEV_Model import SIR_CEV_Model #line:3from sklearn .isotonic import IsotonicRegression #line:5from scipy import optimize #line:7import matplotlib .pyplot as plt #line:9class PortfolioOptim :#line:11    def __init__ (O0OOOOOOOOOO0O0O0 ,OO0O0OOOOO0O0000O :SIR_CEV_Model ,OOO0OO0OO0000000O ,O00O0OO0OO00OO0OO ):#line:13        O0OOOOOOOOOO0O0O0 .ir =IsotonicRegression ()#line:15        O0OOOOOOOOOO0O0O0 .epsilon =OOO0OO0OO0000000O #line:17        O0OOOOOOOOOO0O0O0 .MarketModel =OO0O0OOOOO0O0000O #line:18        O0OOOOOOOOOO0O0O0 .x0 =O0OOOOOOOOOO0O0O0 .MarketModel .x0 #line:19        O0OOOOOOOOOO0O0O0 .u =O0OOOOOOOOOO0O0O0 .MarketModel .u #line:20        O0OOOOOOOOOO0O0O0 .gamma =O00O0OO0OO00OO0OO #line:21        O0OOOOOOOOOO0O0O0 .xi =O0OOOOOOOOOO0O0O0 .MarketModel .xi #line:23    def __ell_iso__ (O0000O0O0O0OO0OOO ,O000OO000000OOO0O ,O000OOOOOOO0OOO0O ):#line:25        O0OOO0OOO0O0OOOOO =np .exp (O000OO000000OOO0O )#line:27        O000O0OO0OO000O00 =np .exp (O000OOOOOOO0OOO0O )#line:28        OO00O0O000O000O00 =O0000O0O0O0OO0OOO .MarketModel .invF_P +1 /(2 *O0OOO0OOO0O0OOOOO )*(O0000O0O0O0OO0OOO .gamma -O000O0OO0OO000O00 *O0000O0O0O0OO0OOO .xi )#line:30        return OO00O0O000O000O00 ,O0000O0O0O0OO0OOO .ir .fit_transform (O0000O0O0O0OO0OOO .u ,OO00O0O000O000O00 )#line:32    def integrate (OOO0O000O00OOOOOO ,OO00OOO0O0000OOOO ,O0OOO0O00OO00OOOO ):#line:34        return np .sum (0.5 *(OO00OOO0O0000OOOO [:-1 ]+OO00OOO0O0000OOOO [1 :])*np .diff (O0OOO0O00OO00OOOO ))#line:36    def WassersteinDistance (OO00OO00O0O00OO0O ):#line:38        return np .sqrt (OO00OO00O0O00OO0O .integrate ((OO00OO00O0O00OO0O .gs -OO00OO00O0O00OO0O .MarketModel .invF_P )**2 ,OO00OO00O0O00OO0O .u ))#line:40    def Cost (O0O0OOO00O000OO0O ):#line:42        return O0O0OOO00O000OO0O .integrate (O0O0OOO00O000OO0O .gs *O0O0OOO00O000OO0O .xi ,O0O0OOO00O000OO0O .u )#line:44    def RiskMeasure (O00OOOO0O00O00OOO ):#line:46        return -O00OOOO0O00O00OOO .integrate (O00OOOO0O00O00OOO .gs *O00OOOO0O00O00OOO .gamma ,O00OOOO0O00O00OOO .u )#line:48    def Plot_ell_iso (OO00OOO0O0O00OOOO ,OOO000O0O0OOOO000 ):#line:51        O0OO0OOO0OOOO00OO =plt .figure ()#line:54        plt .plot (OO00OOO0O0O00OOOO .u ,OOO000O0O0OOOO000 ,linewidth =0.5 ,color ='g',label =r"$\ell$")#line:55        plt .plot (OO00OOO0O0O00OOOO .u ,OO00OOO0O0O00OOOO .gs ,label =r"$g^*$",color ='r')#line:56        plt .plot (OO00OOO0O0O00OOOO .u ,OO00OOO0O0O00OOOO .MarketModel .invF_P ,linestyle ='--',color ='b',label =r"$F^{-1}_{X_T^\delta}$")#line:57        plt .legend (fontsize =16 )#line:58        plt .xticks (fontsize =12 )#line:59        plt .yticks (fontsize =12 )#line:60        plt .ylim (0 ,3 )#line:62        plt .show ()#line:64        return O0OO0OOO0OOOO00OO #line:66    def Optimise (O0O00OOO000OO0O00 ):#line:68        def OO00000O0O00OOO0O (OOOOO00O0O0OOOO0O ,O00OOOOOOOOO0O000 ):#line:70            O0O0O0OOO000O0O0O ,O0O00OOO000OO0O00 .gs =O0O00OOO000OO0O00 .__ell_iso__ (OOOOO00O0O0OOOO0O ,O00OOOOOOOOO0O000 )#line:73            O0OO0OO000OO0OOO0 =np .abs (O0O00OOO000OO0O00 .WassersteinDistance ()-O0O00OOO000OO0O00 .epsilon )#line:75            return O0OO0OO000OO0OOO0 #line:77        def OOO00000O0OO000O0 (O0OO0OOO0OO0OO000 ):#line:79            OOOOOOO00OOO0OO00 =optimize .minimize (lambda O00O0OO0000OOO0OO :OO00000O0O00OOO0O (O00O0OO0000OOO0OO ,O0OO0OOO0OO0OO000 ),O0O00OOO000OO0O00 .l1 ,method ='Nelder-Mead')#line:81            O0O00OOO000OO0O00 .l1 =OOOOOOO00OOO0OO00 .x #line:83            OO0OO0O00000OOOO0 ,O0O00OOO000OO0O00 .gs =O0O00OOO000OO0O00 .__ell_iso__ (O0O00OOO000OO0O00 .l1 ,O0OO0OOO0OO0OO000 )#line:85            return np .abs (O0O00OOO000OO0O00 .Cost ()-O0O00OOO000OO0O00 .x0 )#line:87        O0O0OOO000000O0O0 =True #line:90        O000O0OOOO0O0O0OO =np .zeros (2 )#line:92        while O0O0OOO000000O0O0 :#line:94            O000O0OOOO0O0O0OO [1 ]=np .random .uniform (-1 ,1 )#line:96            O0O00OOO000OO0O00 .l1 =np .random .uniform (-1 ,1 )#line:97            OO00O000OOOOOO000 =optimize .minimize (OOO00000O0OO000O0 ,O000O0OOOO0O0O0OO [1 ],method ='Nelder-Mead')#line:99            O00OOOO0O0OO00O0O =OO00O000OOOOOO000 .x #line:100            OO0O0OOO000OOOO00 =optimize .minimize (lambda OOO0OO0O0O00OO0O0 :OO00000O0O00OOO0O (OOO0OO0O0O00OO0O0 ,O00OOOO0O0OO00O0O ),O0O00OOO000OO0O00 .l1 ,method ='Nelder-Mead')#line:102            OOO0O000O0O0O0OOO =OO0O0OOO000OOOO00 .x #line:104            O000OO00O0OOO0O00 ,O0O00OOO000OO0O00 .gs =O0O00OOO000OO0O00 .__ell_iso__ (OOO0O000O0O0O0OOO ,O00OOOO0O0OO00O0O )#line:106            if (np .abs (O0O00OOO000OO0O00 .WassersteinDistance ()-O0O00OOO000OO0O00 .epsilon )<1e-3 )and (np .abs (O0O00OOO000OO0O00 .Cost ()-O0O00OOO000OO0O00 .x0 )<1e-3 ):#line:108                O0O0OOO000000O0O0 =False #line:109            if np .exp (O00OOOO0O0OO00O0O )<1e-10 :#line:111                O0O0OOO000000O0O0 =False #line:112        if np .exp (O00OOOO0O0OO00O0O )<1e-10 :#line:114            O00OOOO0O0OO00O0O [0 ]=-np .inf #line:116            OO0O0OOO000OOOO00 =optimize .minimize (lambda OO000O00OO0OO0O0O :OO00000O0O00OOO0O (OO000O00OO0OO0O0O ,O00OOOO0O0OO00O0O ),O0O00OOO000OO0O00 .l1 ,method ='Nelder-Mead')#line:117            OOO0O000O0O0O0OOO =OO0O0OOO000OOOO00 .x #line:119            O000OO00O0OOO0O00 ,O0O00OOO000OO0O00 .gs =O0O00OOO000OO0O00 .__ell_iso__ (OOO0O000O0O0O0OOO ,O00OOOO0O0OO00O0O )#line:121        OO00O000000000O00 =O0O00OOO000OO0O00 .Plot_ell_iso (O000OO00O0OOO0O00 )#line:123        return np .exp (np .array ([OOO0O000O0O0O0OOO [0 ],O00OOOO0O0OO00O0O [0 ]])),O0O00OOO000OO0O00 .WassersteinDistance (),O0O00OOO000OO0O00 .Cost (),O0O00OOO000OO0O00 .RiskMeasure (),OO00O000000000O00 
+import numpy as np 
+
+from SIR_CEV_Model import SIR_CEV_Model
+
+from sklearn.isotonic import IsotonicRegression
+
+from scipy import optimize
+
+import matplotlib.pyplot as plt
+
+class PortfolioOptim:
+    
+    def __init__(self, MarketModel : SIR_CEV_Model, epsilon, gamma):
+        
+        self.ir = IsotonicRegression()
+        
+        self.epsilon = epsilon    
+        self.MarketModel = MarketModel
+        self.x0 = self.MarketModel.x0
+        self.u = self.MarketModel.u
+        self.gamma = gamma
+                
+        self.xi = self.MarketModel.xi
+
+    def __ell_iso__(self, l1, l2):
+        
+        lam1 = np.exp(l1)
+        lam2 = np.exp(l2)
+        
+        ell = self.MarketModel.invF_P + 1/(2*lam1)*(self.gamma - lam2 * self.xi)
+                
+        return ell, self.ir.fit_transform(self.u, ell )
+
+    def integrate(self, f, u):
+        
+        return np.sum(0.5*(f[:-1]+f[1:])*np.diff(u))
+
+    def WassersteinDistance(self):
+    
+        return np.sqrt(self.integrate((self.gs-self.MarketModel.invF_P)**2, self.u))
+    
+    def Cost(self):
+        
+        return self.integrate( self.gs* self.xi, self.u)
+    
+    def RiskMeasure(self):
+                    
+        return -self.integrate( self.gs* self.gamma, self.u)    
+    
+    
+    def Plot_ell_iso(self, ell):
+        
+        
+        fig = plt.figure()
+        plt.plot(self.u, ell, linewidth=0.5, color='g', label=r"$\ell$")
+        plt.plot(self.u, self.gs, label = r"$g^*$", color='r')
+        plt.plot(self.u, self.MarketModel.invF_P, linestyle='--', color='b', label=r"$F^{-1}_{X_T^\delta}$")
+        plt.legend(fontsize=16)
+        plt.xticks(fontsize=12)
+        plt.yticks(fontsize=12)
+        
+        plt.ylim( 0, 3 )
+        
+        plt.show()    
+        
+        return fig
+    
+    def Optimise(self):
+                
+        def WD_error(l1, l2):
+            
+            # perform isotonic projection with these parameters 
+            ell, self.gs = self.__ell_iso__(l1, l2 )
+            
+            error = np.abs( self.WassersteinDistance() - self.epsilon)
+            
+            return error
+                
+        def Bdgt_error(l2):
+            
+            sol_opt_l1 = optimize.minimize(lambda x : WD_error(x,l2), self.l1, method='Nelder-Mead')
+            
+            self.l1 = sol_opt_l1.x
+            
+            ell, self.gs = self.__ell_iso__(self.l1, l2)            
+            
+            return np.abs(self.Cost()- self.x0)
+        
+
+        KeepSearching = True
+        
+        lambda0 = np.zeros(2)
+        
+        while KeepSearching:
+            
+            lambda0[1] = np.random.uniform(-1,1)
+            self.l1 = np.random.uniform(-1,1)
+            
+            sol_opt_l2 = optimize.minimize(Bdgt_error, lambda0[1], method='Nelder-Mead')
+            l2 = sol_opt_l2.x
+            
+            sol_opt_l1 = optimize.minimize(lambda x : WD_error(x, l2), self.l1, method='Nelder-Mead')
+            
+            l1 = sol_opt_l1.x
+
+            ell, self.gs = self.__ell_iso__(l1, l2)            
+            
+            if (np.abs(self.WassersteinDistance()-self.epsilon) < 1e-3) and (np.abs(self.Cost()-self.x0) < 1e-3) :
+                KeepSearching = False
+        
+            if np.exp(l2) < 1e-10:
+                KeepSearching = False
+                
+        if np.exp(l2) < 1e-10:
+            
+            l2[0] = -np.inf
+            sol_opt_l1 = optimize.minimize(lambda x : WD_error(x, l2), self.l1, method='Nelder-Mead')
+            
+            l1 = sol_opt_l1.x
+            
+            ell, self.gs = self.__ell_iso__(l1, l2)            
+            
+        fig = self.Plot_ell_iso(ell)             
+            
+        
+        return np.exp(np.array([l1[0],l2[0]])), self.WassersteinDistance(), self.Cost(), self.RiskMeasure(), fig

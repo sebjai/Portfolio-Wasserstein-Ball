@@ -1,1 +1,390 @@
-import numpy as np #line:1import matplotlib .pyplot as plt #line:3from matplotlib .ticker import FormatStrFormatter #line:5from statsmodels .distributions .empirical_distribution import ECDF #line:7from scipy .stats import norm #line:9from scipy .special import lambertw #line:11from scipy import optimize #line:13from IPython .display import display ,Math #line:15import copy #line:17class SIR_CEV_Model ():#line:20    def __init__ (O000000OO00OOO0OO ,O000OO0OO0O000O0O ,OO0O00OO0OO000O00 ,OOO000OOO0OO000O0 ,O00O000O00OOOO00O ,OO0O000O0OO00OOOO ):#line:22        O000000OO00OOO0OO .S0 =OO0O00OO0OO000O00 #line:24        O000000OO00OOO0OO .x0 =O000OO0OO0O000O0O #line:25        O000000OO00OOO0OO .pi =OOO000OOO0OO000O0 #line:26        O000000OO00OOO0OO .T =O00O000O00OOOO00O #line:27        O000000OO00OOO0OO .params =OO0O000O0OO00OOOO #line:29    def GetParams (OO0OO0O000O000O00 ,OO0OO0OOO000O0O0O ="P"):#line:32        O0O0OO0O000OO0O0O =OO0OO0O000O000O00 .x0 #line:34        O0O00OOOO00O00O0O =OO0OO0O000O000O00 .S0 #line:35        OOOOOO0OOOO0OO0OO =OO0OO0O000O000O00 .pi #line:36        O0OOOOO0OOOO0OOO0 =OO0OO0O000O000O00 .T #line:37        if OO0OO0OOO000O0O0O =="P":#line:39            O00OO0O0O00OO0O00 =OO0OO0O000O000O00 .params ["P"]["mu"]#line:41            O0OO00OO00OOOOOO0 =OO0OO0O000O000O00 .params ["P"]["sigma"]#line:42            OO0OO0O0O00O0OO00 =OO0OO0O000O000O00 .params ["P"]["beta"]#line:43            OOOOO0000O000000O =OO0OO0O000O000O00 .params ["P"]["rho"]#line:44            O00O0O0O0O0O00O00 =OO0OO0O000O000O00 .params ["P"]["r0"]#line:45            O000OOO00OOO0OO00 =OO0OO0O000O000O00 .params ["P"]["kappa"]#line:46            O0OOO000O0O0OOO0O =OO0OO0O000O000O00 .params ["P"]["theta_r"]#line:47            OOO000000OOO0OOOO =OO0OO0O000O000O00 .params ["P"]["sigma_r"]#line:48        elif OO0OO0OOO000O0O0O =="Q":#line:50            O00OO0O0O00OO0O00 =OO0OO0O000O000O00 .params ["P"]["mu"]#line:52            O0OO00OO00OOOOOO0 =OO0OO0O000O000O00 .params ["P"]["sigma"]#line:53            OO0OO0O0O00O0OO00 =OO0OO0O000O000O00 .params ["P"]["beta"]#line:54            OOOOO0000O000000O =OO0OO0O000O000O00 .params ["P"]["rho"]#line:55            O00O0O0O0O0O00O00 =OO0OO0O000O000O00 .params ["P"]["r0"]#line:56            O000OOO00OOO0OO00 =OO0OO0O000O000O00 .params ["Q"]["kappa"]#line:57            O0OOO000O0O0OOO0O =OO0OO0O000O000O00 .params ["Q"]["theta_r"]#line:58            OOO000000OOO0OOOO =OO0OO0O000O000O00 .params ["Q"]["sigma_r"]#line:59        return O0O0OO0O000OO0O0O ,O0O00OOOO00O00O0O ,O00OO0O0O00OO0O00 ,O0OO00OO00OOOOOO0 ,OO0OO0O0O00O0OO00 ,OOOOO0000O000000O ,OOOOOO0OOOO0OO0OO ,O00O0O0O0O0O00O00 ,O000OOO00OOO0OO00 ,O0OOO000O0O0OOO0O ,OOO000000OOO0OOOO ,O0OOOOO0OOOO0OOO0 #line:61    def SimAndPlot (OOOO0OOO0OOOO0000 ,O0O00OOO0O00000O0 ,O0O0OO0OOOO00O0O0 ,OO0OOOOOOOOOO000O ="P"):#line:64        OO00OOOOO0O00OOO0 ,O0O0OO0OOOO00OO00 ,O0O0O0000OOOO00O0 ,OOOOOOOOOOO000OO0 ,OO00O0000OO0OO00O ,O00OO00000O000000 =OOOO0OOO0OOOO0000 .Sim (O0O00OOO0O00000O0 ,O0O0OO0OOOO00O0O0 ,OO0OOOOOOOOOO000O )#line:66        plt .rc ('axes',labelsize =20 )#line:68        plt .rc ('xtick',labelsize =16 )#line:69        plt .rc ('ytick',labelsize =16 )#line:70        plt .figure (figsize =(10 ,5 ))#line:73        for OOOO0O0O0000O00O0 in range (O0O0OO0OOOO00OO00 .shape [2 ]):#line:75            O00000O00OOOO0O0O =plt .subplot (1 ,O0O0OO0OOOO00OO00 .shape [2 ],OOOO0O0O0000O00O0 +1 )#line:77            plt .fill_between (OO00OOOOO0O00OOO0 ,np .quantile (O0O0OO0OOOO00OO00 [:,:,OOOO0O0O0000O00O0 ],0.1 ,axis =0 ).T ,np .quantile (O0O0OO0OOOO00OO00 [:,:,OOOO0O0O0000O00O0 ],0.9 ,axis =0 ).T ,alpha =0.2 ,color ='y')#line:79            plt .plot (OO00OOOOO0O00OOO0 ,O0O0OO0OOOO00OO00 [:100 ,:,OOOO0O0O0000O00O0 ].T ,linewidth =0.3 )#line:80            plt .plot (OO00OOOOO0O00OOO0 ,O0O0OO0OOOO00OO00 [0 ,:,OOOO0O0O0000O00O0 ].T ,linewidth =2 )#line:81            plt .plot (OO00OOOOO0O00OOO0 ,np .quantile (O0O0OO0OOOO00OO00 [:,:,OOOO0O0O0000O00O0 ],[0.1 ,0.5 ,0.9 ],axis =0 ).T ,'-k',linewidth =0.2 )#line:82            plt .xlabel ('$t$')#line:83            plt .ylabel ('$S_t^{'+str (OOOO0O0O0000O00O0 +1 )+'}$')#line:84            O00000O00OOOO0O0O .yaxis .set_major_formatter (FormatStrFormatter ('%.2f'))#line:85        plt .tight_layout ()#line:87        plt .show ()#line:88        plt .figure (figsize =(10 ,5 ))#line:90        O00000O00OOOO0O0O =plt .subplot (1 ,2 ,1 )#line:92        plt .fill_between (OO00OOOOO0O00OOO0 ,np .quantile (O0O0O0000OOOO00O0 ,0.1 ,axis =0 ).T ,np .quantile (O0O0O0000OOOO00O0 ,0.9 ,axis =0 ).T ,alpha =0.2 ,color ='y')#line:93        plt .plot (OO00OOOOO0O00OOO0 ,O0O0O0000OOOO00O0 [:100 ,:].T ,linewidth =0.3 )#line:94        plt .plot (OO00OOOOO0O00OOO0 ,O0O0O0000OOOO00O0 [0 ,:].T ,linewidth =2 )#line:95        plt .plot (OO00OOOOO0O00OOO0 ,np .quantile (O0O0O0000OOOO00O0 ,[0.1 ,0.5 ,0.9 ],axis =0 ).T ,'-k',linewidth =0.2 )#line:96        plt .xlabel ('$t$')#line:97        plt .ylabel ('$X_t^{\delta}$')#line:98        O00000O00OOOO0O0O .yaxis .set_major_formatter (FormatStrFormatter ('%.2f'))#line:99        O00000O00OOOO0O0O =plt .subplot (1 ,2 ,2 )#line:101        plt .fill_between (OO00OOOOO0O00OOO0 ,np .quantile (OOOOOOOOOOO000OO0 ,0.1 ,axis =0 ).T ,np .quantile (OOOOOOOOOOO000OO0 ,0.9 ,axis =0 ).T ,alpha =0.2 ,color ='y')#line:102        plt .plot (OO00OOOOO0O00OOO0 ,OOOOOOOOOOO000OO0 [:100 ,:].T ,linewidth =0.3 )#line:103        plt .plot (OO00OOOOO0O00OOO0 ,OOOOOOOOOOO000OO0 [0 ,:].T ,linewidth =2 )#line:104        plt .plot (OO00OOOOO0O00OOO0 ,np .quantile (OOOOOOOOOOO000OO0 ,[0.1 ,0.5 ,0.9 ],axis =0 ).T ,'-k',linewidth =0.2 )#line:105        plt .xlabel ('$t$')#line:106        plt .ylabel ('$Z_t$')#line:107        plt .ylim (0 ,2 )#line:108        O00000O00OOOO0O0O .yaxis .set_major_formatter (FormatStrFormatter ('%.2f'))#line:109        plt .tight_layout ()#line:112        plt .show ()#line:113        return OO00OOOOO0O00OOO0 ,O0O0OO0OOOO00OO00 ,O0O0O0000OOOO00O0 ,OOOOOOOOOOO000OO0 ,OO00O0000OO0OO00O ,O00OO00000O000000 #line:115    def BondPrice (OOOO0O0O0OOOOOO0O ,OOOOOO0O00000O0OO ,O0OO0O0O00O000OO0 ):#line:117        OO00O00OO0O00000O =OOOO0O0O0OOOOOO0O .params ["Q"]["kappa"]#line:119        O00O000O00000OO00 =OOOO0O0O0OOOOOO0O .params ["Q"]["theta_r"]#line:120        OOO0OO00OO0O0O0O0 =OOOO0O0O0OOOOOO0O .params ["Q"]["sigma_r"]#line:121        O0O0OOO0OOO000OO0 =(1 -np .exp (-OO00O00OO0O00000O *O0OO0O0O00O000OO0 ))/OO00O00OO0O00000O #line:123        O0O0OO0OOO00O00O0 =np .exp ((O00O000O00000OO00 -OOO0OO00OO0O0O0O0 **2 /(2 *OO00O00OO0O00000O ))*(O0O0OOO0OOO000OO0 -O0OO0O0O00O000OO0 )-(OOO0OO00OO0O0O0O0 *O0O0OOO0OOO000OO0 )**2 /(4 *OO00O00OO0O00000O ))#line:125        return O0O0OO0OOO00O00O0 *np .exp (-O0O0OOO0OOO000OO0 *OOOOOO0O00000O0OO )#line:127    def Sim (O0O0O0OO0O0O0OO0O ,OO00OO00OO0000O00 ,OOOO00000000O0OOO ,OO000OO0OO00OOOO0 ="P"):#line:131        OO0O0O00O00OOO00O ,OOO00O0O000O000OO ,OOOO0OO00OO0OOOOO ,O0O0OOOOOO0OO0O0O ,OO0O000O0O0OOOO0O ,OOO0OOO0O0O0O0OOO ,OOOO0000O0OO0OOOO ,OOOO0O0O00OO0OOO0 ,O00OO00O00O000000 ,OO00OO00OO00000O0 ,O00OO0OO00O0O0O0O ,O00OOOOOO0OO00O0O =O0O0O0OO0O0O0OO0O .GetParams (OO000OO0OO00OOOO0 )#line:135        OO00O000O00O00O00 =np .linspace (0 ,O00OOOOOO0OO00O0O ,OO00OO00OO0000O00 +1 )#line:137        OOOOOOOO0O0000O00 =OO00O000O00O00O00 [1 ]-OO00O000O00O00O00 [0 ]#line:138        OOOO0000000O0OO00 =np .sqrt (OOOOOOOO0O0000O00 )#line:139        OOO000O00O0OOOO0O =np .zeros ((OOOO00000000O0OOO ,OO00OO00OO0000O00 +1 ))#line:141        OOO000O00O0OOOO0O [:,0 ]=OOOO0O0O00OO0OOO0 #line:142        O0OOO0OOOOO0O00OO =O0O0O0OO0O0O0OO0O .params ["P"]["kappa"]*O0O0O0OO0O0O0OO0O .params ["P"]["theta_r"]-O0O0O0OO0O0O0OO0O .params ["Q"]["kappa"]*O0O0O0OO0O0O0OO0O .params ["Q"]["theta_r"]#line:148        OOOO000O00O000O0O =O0O0O0OO0O0O0OO0O .params ["P"]["kappa"]-O0O0O0OO0O0O0OO0O .params ["Q"]["kappa"]#line:149        OOO0OOO0O00O0O000 =O00OO0OO00O0O0O0O *np .sqrt ((1 -np .exp (-2 *O00OO00O00O000000 *OOOOOOOO0O0000O00 ))/(2 *O00OO00O00O000000 *OOOOOOOO0O0000O00 ))#line:151        OO0O00OOO0O00OO00 =np .zeros ((OOOO00000000O0OOO ,OO00OO00OO0000O00 +1 ,len (OOO00O0O000O000OO )+1 ))#line:155        OO0O00OOO0O00OO00 [:,0 ,:len (OOO00O0O000O000OO )]=OOO00O0O000O000OO #line:156        OO0O00OOO0O00OO00 [:,0 ,-1 ]=O0O0O0OO0O0O0OO0O .BondPrice (OOOO0O0O00OO0OOO0 ,O00OOOOOO0OO00O0O )#line:157        OOOO0O0OO0OOO00OO =np .zeros ((OOOO00000000O0OOO ,OO00OO00OO0000O00 +1 ))#line:159        OOOO0O0OO0OOO00OO [:,0 ]=OO0O0O00O00OOO00O #line:160        OOO000OO000OOO000 =np .zeros ((OOOO00000000O0OOO ,OO00OO00OO0000O00 +1 ))#line:162        OOO000OO000OOO000 [:,0 ]=1 #line:163        O00O000OOOOO0OO00 =np .zeros ((OOOO00000000O0OOO ,len (OOO00O0O000O000OO )+1 ))#line:165        OOO0O0O0OOO0OOOO0 =np .linalg .inv (OOO0OOO0O0O0O0OOO )#line:167        O0O0000O00O0OOOOO =np .zeros ((OOOO00000000O0OOO ,len (OOO00O0O000O000OO )+1 ))#line:169        for O00OO00OO00OO0O00 in range (OO00OO00OO0000O00 ):#line:171            O000000OO00000O00 =O0O0OOOOOO0OO0O0O *OO0O00OOO0O00OO00 [:,O00OO00OO00OO0O00 ,:len (OOO00O0O000O000OO )]**OO0O000O0O0OOOO0O #line:175            O0O0000O00O0OOOOO [:,:len (OOO00O0O000O000OO )]=((O0O0O0OO0O0O0OO0O .params ["P"]["mu"].reshape (1 ,-1 )-OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ].reshape (-1 ,1 ))/(O000000OO00000O00 ))#line:176            O0O0000O00O0OOOOO [:,-1 ]=(O0OOO0OOOOO0O00OO -OOOO000O00O000O0O *OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ])/O00OO0OO00O0O0O0O #line:177            O0O0000O00O0OOOOO =O0O0000O00O0OOOOO @OOO0O0O0OOO0OOOO0 #line:179            OO00OOOOOOO0O000O =OOOO0000000O0OO00 *np .random .multivariate_normal (np .zeros (len (OOO00O0O000O000OO )+1 ),OOO0OOO0O0O0O0OOO ,OOOO00000000O0OOO )#line:183            if OO000OO0OO00OOOO0 =="Q":#line:184                OO00OOOOOOO0O000O -=(O0O0000O00O0OOOOO @OOO0OOO0O0O0O0OOO )*OOOOOOOO0O0000O00 #line:185            O00O000OOOOO0OO00 +=OO00OOOOOOO0O000O #line:186            OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 +1 ]=OO00OO00OO00000O0 +(OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ]-OO00OO00OO00000O0 )*np .exp (-O00OO00O00O000000 *OOOOOOOO0O0000O00 )+OOO0OOO0O00O0O000 *OO00OOOOOOO0O000O [:,-1 ]#line:189            OO0O00OOO0O00OO00 [:,O00OO00OO00OO0O00 +1 ,:len (OOO00O0O000O000OO )]=OO0O00OOO0O00OO00 [:,O00OO00OO00OO0O00 ,:len (OOO00O0O000O000OO )]*np .exp ((OOOO0OO00OO0OOOOO -0.5 *O000000OO00000O00 **2 )*OOOOOOOO0O0000O00 +O000000OO00000O00 *OO00OOOOOOO0O000O [:,:len (OOO00O0O000O000OO )])#line:192            OO0O00OOO0O00OO00 [:,O00OO00OO00OO0O00 +1 ,-1 ]=O0O0O0OO0O0O0OO0O .BondPrice (OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 +1 ],O00OOOOOO0OO00O0O -OO00O000O00O00O00 [O00OO00OO00OO0O00 +1 ])#line:195            O0OOOOO00OO00O0O0 =np .sum (O0O0000O00O0OOOOO *(OOO0OOO0O0O0O0OOO @O0O0000O00O0OOOOO .T ).T ,axis =1 )#line:198            OOO000OO000OOO000 [:,O00OO00OO00OO0O00 +1 ]=OOO000OO000OOO000 [:,O00OO00OO00OO0O00 ]*np .exp (-(OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ]+0.5 *O0OOOOO00OO00O0O0 )*OOOOOOOO0O0000O00 -np .sum (OO00OOOOOOO0O000O *O0O0000O00O0OOOOO ,axis =1 ))#line:199            O00000000OO0OOO00 =(1 -np .exp (-O00OO00O00O000000 *(O00OOOOOO0OO00O0O -OO00O000O00O00O00 [O00OO00OO00OO0O00 ])))/O00OO00O00O000000 #line:204            O0O0000OOO0OO0OO0 =OOOO0000O0OO0OOOO *np .concatenate ((O000000OO00000O00 ,-O00OO0OO00O0O0O0O *O00000000OO0OOO00 *np .ones ((OOOO00000000O0OOO ,1 ))),axis =1 )#line:205            OOO00OOO0000000O0 =np .sum (O0O0000OOO0OO0OO0 *(OOO0OOO0O0O0O0OOO @O0O0000OOO0OO0OO0 .T ).T ,axis =1 )#line:208            O0000O0OOO000O000 =OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ]-O00000000OO0OOO00 *(O0OOO0OOOOO0O00OO -OOOO000O00O000O0O *OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ])#line:210            O0OO000OO00OOOOOO =np .concatenate ((OOOO0OO00OO0OOOOO *np .ones ((OOOO00000000O0OOO ,1 )),O0000O0OOO000O000 .reshape (-1 ,1 )),axis =1 )#line:211            OOOO0O0OO0OOO00OO [:,O00OO00OO00OO0O00 +1 ]=OOOO0O0OO0OOO00OO [:,O00OO00OO00OO0O00 ]*np .exp ((OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ]+np .sum (OOOO0000O0OO0OOOO *(O0OO000OO00OOOOOO -OOO000O00O0OOOO0O [:,O00OO00OO00OO0O00 ].reshape (-1 ,1 )),axis =1 )-0.5 *OOO00OOO0000000O0 )*OOOOOOOO0O0000O00 +np .sum (O0O0000OOO0OO0OO0 *OO00OOOOOOO0O000O ,axis =1 ))#line:214        return OO00O000O00O00O00 ,OO0O00OOO0O00OO00 ,OOOO0O0OO0OOO00OO ,OOO000OO000OOO000 ,O00O000OOOOO0OO00 ,OOO000O00O0OOOO0O #line:216    def GenerateUniforms (OO000000O0O0OOO0O ,OO00OO0O0OO0OOO00 ,O0OOO000O0OOOOOO0 ):#line:219        np .seterr (all ='ignore')#line:221        OO000000O00O0OOO0 =lambda O0OOOO0O00OOO0O00 :1.06 *np .std (O0OOOO0O00OOO0O00 )*(len (O0OOOO0O00OOO0O00 ))**(-1 /5 )#line:223        OO0OOOO0O00000O00 =lambda OOOO0OOOOOO0OOO00 ,O00O0O0O00O0OO0OO ,O00OO0OOOO000000O :np .sum (norm .pdf ((OOOO0OOOOOO0OOO00 .reshape (1 ,-1 )-O00O0O0O00O0OO0OO .reshape (-1 ,1 ))/O00OO0OOOO000000O )/O00OO0OOOO000000O ,axis =0 )/len (O00O0O0O00O0OO0OO )#line:225        OO00O0O0OOOOO0OO0 =ECDF (OO00OO0O0OO0OOO00 )#line:227        O000O00O0OOOO0O0O =ECDF (O0OOO000O0OOOOOO0 )#line:228        OOOO0OOOO0O0OOOOO =OO00O0O0OOOOO0OO0 (OO00OO0O0OO0OOO00 )#line:231        OO0000O0O0000OO00 =O000O00O0OOOO0O0O (O0OOO000O0OOOOOO0 )#line:232        OOO00OOO000000O00 =lambda O0OOO00OO0O00O00O ,OO0O00OO0O0O0O0O0 ,O0000OO00OO000OO0 ,OOO0000000O0O0000 ,O0OOO0000O00O0O0O ,O0OOO0O0O00OO00O0 :np .sum (norm .cdf ((O0OOO00OO0O00O00O .reshape (1 ,-1 )-O0000OO00OO000OO0 .reshape (-1 ,1 ))/O0OOO0000O00O0O0O )*norm .pdf ((OO0O00OO0O0O0O0O0 .reshape (1 ,-1 )-OOO0000000O0O0000 .reshape (-1 ,1 ))/O0OOO0O0O00OO00O0 )/O0OOO0O0O00OO00O0 ,axis =0 )/len (O0000OO00OO000OO0 )/OO0OOOO0O00000O00 (OO0O00OO0O0O0O0O0 ,OOO0000000O0O0000 ,O0OOO0O0O00OO00O0 )#line:235        OO0OOOO0000OO000O =OOO00OOO000000O00 (OO00OO0O0OO0OOO00 ,O0OOO000O0OOOOOO0 ,OO00OO0O0OO0OOO00 ,O0OOO000O0OOOOOO0 ,OO000000O00O0OOO0 (OO00OO0O0OO0OOO00 ),OO000000O00O0OOO0 (O0OOO000O0OOOOOO0 ))#line:237        O0OOOOO00000OO0OO =ECDF (OO0OOOO0000OO000O )#line:239        OO0OOOO0000OO000O =O0OOOOO00000OO0OO (OO0OOOO0000OO000O )#line:240        return OOOO0OOOO0O0OOOOO ,OO0000O0O0000OO00 ,OO0OOOO0000OO000O #line:243    def integrate (O0OO0O00OOOOOO0O0 ,O0OO00O0OOO0O0O0O ,O0O00O0O0000000OO ):#line:245        return np .sum (0.5 *(O0OO00O0OOO0O0O0O [:-1 ]+O0OO00O0OOO0O0O0O [1 :])*np .diff (O0O00O0O0000000OO ))#line:247    def Create_a_b_grid (OO00O0OO00O0O0OOO ,O00000O000O0O00OO ,O0O0OOO0OO0O0O0O0 ,O000OOOOOOO0O000O ):#line:250        OO0OOOOO0O0O00O00 =0.002 #line:252        OO0O0OO00OO0O0OO0 =10 **(np .linspace (-10 ,np .log (OO0OOOOO0O0O00O00 )/np .log (10 ),30 ))-1e-11 #line:254        O000O00OO0OO00000 =np .flip (copy .deepcopy (OO0O0OO00OO0O0OO0 ))#line:255        O0OO0OOO00OOOOO00 =O00000O000O0O00OO +OO0O0OO00OO0O0OO0 #line:257        OO00OOO0O00O0000O =np .linspace (O00000O000O0O00OO +OO0OOOOO0O0O00O00 ,O0O0OOO0OO0O0O0O0 -OO0OOOOO0O0O00O00 ,O000OOOOOOO0O000O )#line:258        OO000OO0OO0000000 =O0O0OOO0OO0O0O0O0 -O000O00OO0OO00000 #line:259        return np .concatenate ((O0OO0OOO00OOOOO00 ,OO00OOO0O00O0000O ,OO000OO0OO0000000 ))#line:261    def Sim_Uniforms_Xi (O0OOOOO00O00O00OO ,O00OO0O00OO0O0000 ,O0OO0OO00O0000O0O ,OOO00O00000000OOO ,OOOO00OOOOOO0OO0O ,O0OO00000O000O000 ="P",O00O00OOO0O00O0O0 ="Gaussian"):#line:264        display (Math (r"Simulating\quad X, Z..."))#line:266        _OO0O0OO0OO0O0O00O ,_OO0O0OO0OO0O0O00O ,O000000000O0000O0 ,OOOOOOO0O0OOOOO00 ,O0000O0000OO000OO ,_OO0O0OO0OO0O0O00O =O0OOOOO00O00O00OO .Sim (O0OO0OO00O0000O0O ,OOO00O00000000OOO ,O0OO00000O000O000 )#line:267        O000000000O0000O0 =O000000000O0000O0 [:,-1 ]#line:269        OOOOOOO0O0OOOOO00 =OOOOOOO0O0OOOOO00 [:,-1 ]#line:270        OOOOOOO0O0OOOOO00 *=O0OOOOO00O00O00OO .BondPrice (O0OOOOO00O00O00OO .params ["P"]["r0"],O0OOOOO00O00O00OO .T )/np .mean (OOOOOOO0O0OOOOO00 )#line:271        OOO0000OO00O00O00 =(np .mean (O000000000O0000O0 *OOOOOOO0O0OOOOO00 )-O0OOOOO00O00O00OO .x0 )/O0OOOOO00O00O00OO .BondPrice (O0OOOOO00O00O00OO .params ["P"]["r0"],O0OOOOO00O00O00OO .T )#line:273        O000000000O0000O0 -=OOO0000OO00O00O00 #line:275        OO00OO00OOO0OO000 =lambda OOOO0OOOOO00OO0O0 :1.06 *np .std (OOOO0OOOOO00OO0O0 )*(len (OOOO0OOOOO00OO0O0 ))**(-1 /5 )#line:280        OOO0OO00O000OO00O =np .min (O000000000O0000O0 )#line:282        OOO0OO00O000OO00O -=np .abs (OOO0OO00O000OO00O )*0.01 #line:283        O0O00O0OO000O000O =np .max (O000000000O0000O0 )#line:284        O0O00O0OO000O000O +=np .abs (O0O00O0OO000O000O )*0.01 #line:285        OOOOO00OO00000OO0 =ECDF (O000000000O0000O0 )#line:287        O0OOOOO00O00O00OO .invF_P =np .zeros (len (OOOO00OOOOOO0OO0O ))#line:289        for OOO0OO000OOO0OOO0 in range (len (OOOO00OOOOOO0OO0O )):#line:290            O0OOOOO00O00O00OO .invF_P [OOO0OO000OOO0OOO0 ]=optimize .root_scalar (lambda OOOO0000O000O0O00 :(OOOOO00OO00000OO0 (OOOO0000O000O0O00 )-OOOO00OOOOOO0OO0O [OOO0OO000OOO0OOO0 ]),method ='Brentq',bracket =[OOO0OO00O000OO00O ,O0O00O0OO000O000O ]).root #line:293        O000000000O0000O0 =np .log (O000000000O0000O0 .reshape (-1 ))#line:295        OOOOOOO0O0OOOOO00 =np .log (OOOOOOO0O0OOOOO00 .reshape (-1 ))#line:296        display (Math (r'Generating\quad U_X, \tilde{U}_Z...'))#line:298        OOOO0O000O0OOOOO0 ,O000OOO00O0OO0OO0 ,O0O000O00OOO0O000 =O0OOOOO00O00O00OO .GenerateUniforms (OOOOOOO0O0OOOOO00 ,O000000000O0000O0 )#line:299        display (Math (r"generating \quad V..."))#line:302        if O00O00OOO0O00O0O0 =="Gaussian":#line:304            print ("Gaussian")#line:305            O0O0O0OOOOO00000O =O00OO0O00OO0O0000 ["p"]#line:307            O0O00O0O00OOOO00O =norm .cdf (O0O0O0OOOOO00000O *norm .ppf (O000OOO00O0OO0OO0 )+np .sqrt (1 -O0O0O0OOOOO00000O **2 )*norm .ppf (1 -O0O000O00OOO0O000 ))#line:308        elif O00O00OOO0O00O0O0 =="CoIn":#line:310            print ("CoIn")#line:311            if O00OO0O00OO0O0000 ["us"]>0 :#line:313                O0O00O0O00OOOO00O =(1 -O0O000O00OOO0O000 )*O00OO0O00OO0O0000 ["us"]*(O000OOO00O0OO0OO0 <=O00OO0O00OO0O0000 ["us"])+O000OOO00O0OO0OO0 *(O000OOO00O0OO0OO0 >O00OO0O00OO0O0000 ["us"])*(1 -O0O000O00OOO0O000 >0 )#line:314            else :#line:315                O0O00O0O00OOOO00O =O000OOO00O0OO0OO0 #line:316        elif O00O00OOO0O00O0O0 =="Gumbel":#line:319            print ("Gumbel")#line:321            O00O00O00O00O0000 =O00OO0O00OO0O0000 ["zeta"]#line:322            OO00O00OO00OO000O =(-np .log (O000OOO00O0OO0OO0 ))**O00O00O00O00O0000 #line:324            OOOOO0000O0OOO0OO =-OO00O00OO00OO000O **(1 /O00O00O00O00O0000 -1 )/O00O00O00O00O0000 *O000OOO00O0OO0OO0 #line:325            OOOO0OOO00O0O0O0O =(1 -O0O000O00OOO0O000 )*OOOOO0000O0OOO0OO #line:327            O0OOO00O0O0000O00 =((O00O00O00O00O0000 -1 )*lambertw ((-O00O00O00O00O0000 *OOOO0OOO00O0O0O0O )**(1 /(1 -O00O00O00O00O0000 ))/(O00O00O00O00O0000 -1 )))**O00O00O00O00O0000 #line:328            O0O00O0O00OOOO00O =np .real (np .exp (-(O0OOO00O0O0000O00 -OO00O00OO00OO000O )**(1 /O00O00O00O00O0000 )))#line:330        elif O00O00OOO0O00O0O0 =="All":#line:332            O0O0O00O000000O0O =ECDF (np .exp (OOOOOOO0O0OOOOO00 ))#line:334            O0O00O0O00OOOO00O =1 -O0O0O00O000000O0O (np .exp (OOOOOOO0O0OOOOO00 ))#line:336        OOOOOOOO0O0OOO0OO =ECDF (O0O00O0O00OOOO00O )#line:339        O0O00O0O00OOOO00O =OOOOOOOO0O0OOO0OO (O0O00O0O00OOOO00O )#line:340        display (Math (r"generating \quad \xi(u)..."))#line:345        OO000O00O0OOO0000 =~((O0O00O0O00OOOO00O ==0 )|(O0O00O0O00OOOO00O ==1 ))#line:350        O0000OO00O00OO0OO =np .log (O0O00O0O00OOOO00O [OO000O00O0OOO0000 ]/(1 -O0O00O0O00OOOO00O [OO000O00O0OOO0000 ]))#line:351        O0O00000O0000O00O =(np .exp (OOOOOOO0O0OOOOO00 )/np .mean (np .exp (OOOOOOO0O0OOOOO00 )))[OO000O00O0OOO0000 ]#line:354        OO0000OO0OO000O00 =lambda O0O0O0OO0O00OOOOO ,OO00O0OOOOOO000OO ,OOO0O0O0O00OO00O0 :np .sum (norm .pdf ((O0O0O0OO0O00OOOOO .reshape (1 ,-1 )-OO00O0OOOOOO000OO .reshape (-1 ,1 ))/OOO0O0O0O00OO00O0 )/OOO0O0O0O00OO00O0 ,axis =0 )/len (OO00O0OOOOOO000OO )#line:359        O0O0O000O00OOO000 =lambda O00OO0000O00OO0OO ,O0O0OOOOO0OOOO00O ,OO0O000OO00O0OO0O ,O00000O0O0OOO0O0O :np .sum (OO0O000OO00O0OO0O .reshape (-1 ,1 )*norm .pdf ((O00OO0000O00OO0OO .reshape (1 ,-1 )-O0O0OOOOO0OOOO00O .reshape (-1 ,1 ))/O00000O0O0OOO0O0O )/O00000O0O0OOO0O0O ,axis =0 )/len (O0O0OOOOO0OOOO00O )#line:362        OOO00OOOO0O0OO000 =np .quantile (O0000OO00O00OO0OO ,[0.01 ,0.99 ])#line:364        O000O00OO000OOO0O =OO00OO00OOO0OO000 (O0000OO00O00OO0OO [(O0000OO00O00OO0OO >=OOO00OOOO0O0OO000 [0 ])&(O0000OO00O00OO0OO <=OOO00OOOO0O0OO000 [1 ])])/4 #line:366        O0OO0OO00OO0O000O =lambda OO00000000000OO00 :OO0000OO0OO000O00 (OO00000000000OO00 ,O0000OO00O00OO0OO ,O000O00OO000OOO0O )#line:368        O00O00OO0OOO0O0O0 =lambda OO0O0000O0O0O00OO :O0O0O000O00OOO000 (OO0O0000O0O0O00OO ,O0000OO00O00OO0OO ,O0O00000O0000O00O ,O000O00OO000OOO0O )#line:369        OOOO0OO00O00OOO0O =lambda OO0OOO00OOO0000OO :O0OO0OO00OO0O000O (np .log (OO0OOO00OOO0000OO /(1 -OO0OOO00OOO0000OO )))/(OO0OOO00OOO0000OO *(1 -OO0OOO00OOO0000OO ))#line:371        OOOO0OOOO0OOOOO00 =lambda OOOO0O0OO0OO000O0 :O00O00OO0OOO0O0O0 (np .log (OOOO0O0OO0OO000O0 /(1 -OOOO0O0OO0OO000O0 )))/(OOOO0O0OO0OO000O0 *(1 -OOOO0O0OO0OO000O0 ))#line:372        OOOO0OOO00O0O0O0O =np .linspace (-10 ,6 ,50 )#line:375        OO0OOOO0OO000000O =OOOO00OOOOOO0OO0O #line:377        O0O00OO0O0OOO00O0 =OOOO0OO00O00OOO0O (OO0OOOO0OO000000O )#line:380        O0O00OO0O0OOO00O0 /=O0OOOOO00O00O00OO .integrate (O0O00OO0O0OOO00O0 ,OO0OOOO0OO000000O )#line:381        OO00OO00OOO0OOO0O =OOOO0OOOO0OOOOO00 (OO0OOOO0OO000000O )#line:383        OO00OO00OOO0OOO0O /=O0OOOOO00O00O00OO .integrate (OO00OO00OOO0OOO0O ,OO0OOOO0OO000000O )#line:384        O0OOOOO00O00O00OO .u =OO0OOOO0OO000000O #line:386        O0OOOOO00O00O00OO .xi =OO00OO00OOO0OOO0O *O0OOOOO00O00O00OO .BondPrice (O0OOOOO00O00O00OO .params ["P"]["r0"],O0OOOOO00O00O00OO .T )#line:387        return np .exp (O000000000O0000O0 ),np .exp (OOOOOOO0O0OOOOO00 ),O000OOO00O0OO0OO0 ,OOOO0O000O0OOOOO0 ,O0O000O00OOO0O000 ,O0O00O0O00OOOO00O ,OO0OOOO0OO000000O ,O0O00OO0O0OOO00O0 ,OO00OO00OOO0OOO0O #line:389
+import numpy as np 
+
+import matplotlib.pyplot as plt
+# import seaborn as sns
+from matplotlib.ticker import FormatStrFormatter
+
+from statsmodels.distributions.empirical_distribution import ECDF
+
+from scipy.stats import norm
+# from scipy import interpolate
+from scipy.special import lambertw
+# from scipy import integrate
+from scipy import optimize
+
+from IPython.display import display, Math
+
+import copy
+
+
+class SIR_CEV_Model():
+    
+    def __init__(self, x0, S0, pi, T, params):
+        
+        self.S0 = S0
+        self.x0 = x0
+        self.pi = pi
+        self.T = T
+        
+        self.params = params
+        
+
+    def GetParams(self, measure="P"):
+    
+        x0 = self.x0
+        S0 = self.S0
+        pi = self.pi
+        T = self.T
+        
+        if measure == "P":
+
+            mu = self.params["P"]["mu"]
+            sigma = self.params["P"]["sigma"]
+            beta = self.params["P"]["beta"]
+            rho = self.params["P"]["rho"]
+            r0 = self.params["P"]["r0"]
+            kappa = self.params["P"]["kappa"]
+            theta_r = self.params["P"]["theta_r"]
+            sigma_r = self.params["P"]["sigma_r"] 
+            
+        elif measure == "Q":
+            
+            mu = self.params["P"]["mu"]
+            sigma = self.params["P"]["sigma"]
+            beta = self.params["P"]["beta"]
+            rho = self.params["P"]["rho"]
+            r0 = self.params["P"]["r0"]
+            kappa = self.params["Q"]["kappa"]
+            theta_r = self.params["Q"]["theta_r"]
+            sigma_r = self.params["Q"]["sigma_r"] 
+
+        return x0, S0, mu, sigma, beta, rho, pi, r0, kappa, theta_r, sigma_r, T        
+        
+    
+    def SimAndPlot(self, Ndt, Nsims, measure="P"):
+        
+        t, S, X, Z, W, r = self.Sim(Ndt, Nsims, measure)
+        
+        plt.rc('axes', labelsize=20)
+        plt.rc('xtick', labelsize=16)
+        plt.rc('ytick', labelsize=16)
+        
+        
+        plt.figure(figsize=(10,5))
+
+        for i in range(S.shape[2]):
+            
+            ax = plt.subplot(1,S.shape[2],i+1)
+            
+            plt.fill_between(t,np.quantile(S[:,:,i],0.1,axis=0).T,np.quantile(S[:,:,i],0.9,axis=0).T, alpha=0.2, color='y')
+            plt.plot(t,S[:100,:,i].T, linewidth=0.3)
+            plt.plot(t,S[0,:,i].T, linewidth=2)
+            plt.plot(t,np.quantile(S[:,:,i],[0.1,0.5,0.9],axis=0).T,'-k',linewidth=0.2 )
+            plt.xlabel( '$t$')
+            plt.ylabel( '$S_t^{' + str(i+1) +'}$')           
+            ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))        
+
+        plt.tight_layout()
+        plt.show()
+        
+        plt.figure(figsize=(10,5))
+        
+        ax = plt.subplot(1,2,1)
+        plt.fill_between(t,np.quantile(X,0.1,axis=0).T,np.quantile(X,0.9,axis=0).T, alpha=0.2, color='y')
+        plt.plot(t,X[:100,:].T, linewidth=0.3)
+        plt.plot(t,X[0,:].T, linewidth=2)
+        plt.plot(t,np.quantile(X,[0.1,0.5,0.9],axis=0).T,'-k',linewidth=0.2 )
+        plt.xlabel( '$t$')
+        plt.ylabel( '$X_t^{\delta}$')        
+        ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))        
+        
+        ax = plt.subplot(1,2,2)
+        plt.fill_between(t,np.quantile(Z,0.1,axis=0).T,np.quantile(Z,0.9,axis=0).T, alpha=0.2, color='y')
+        plt.plot(t,Z[:100,:].T, linewidth=0.3)
+        plt.plot(t,Z[0,:].T, linewidth=2)
+        plt.plot(t,np.quantile(Z,[0.1,0.5,0.9],axis=0).T,'-k',linewidth=0.2 )
+        plt.xlabel( '$t$')
+        plt.ylabel( '$Z_t$') 
+        plt.ylim(0,2)
+        ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))        
+        
+        
+        plt.tight_layout()
+        plt.show()
+        
+        return t, S, X, Z, W, r 
+    
+    def BondPrice(self, r, tau):
+        
+        kappa = self.params["Q"]["kappa"]
+        theta_r = self.params["Q"]["theta_r"]
+        sigma_r = self.params["Q"]["sigma_r"]
+        
+        B = (1 -np.exp(-kappa*tau))/kappa
+        
+        A = np.exp( (theta_r-sigma_r**2/(2*kappa) )*(B - tau) - (sigma_r*B)**2/(4*kappa) )
+        
+        return A * np.exp(-B*r)
+    
+    
+    
+    def Sim(self, Ndt, Nsims, measure="P") :
+        
+        # import pdb; pdb.set_trace()
+        
+        x0, S0, mu, sigma, beta, rho, pi, r0, kappa, theta_r, sigma_r, T  = self.GetParams(measure)
+        
+        t = np.linspace(0, T, Ndt+1)
+        dt = t[1] - t[0]
+        sqrt_dt = np.sqrt(dt)
+        
+        r = np.zeros((Nsims, Ndt+1))
+        r[:,0] = r0        
+
+        # used to change from P->Q
+        #
+        # (a0 - a1 * r)/sigma_r is the drift correction for IR
+        #
+        a0 = self.params["P"]["kappa"]*self.params["P"]["theta_r"]-self.params["Q"]["kappa"]*self.params["Q"]["theta_r"]
+        a1 = self.params["P"]["kappa"]-self.params["Q"]["kappa"]
+        
+        sigma_r_eff = sigma_r*np.sqrt((1-np.exp(-2*kappa*dt))/(2*kappa*dt))
+
+        
+        # equity assets let last asset be the bond
+        S = np.zeros( (Nsims, Ndt+1, len(S0)+1) )
+        S[:, 0, :len(S0)] = S0
+        S[:,0,-1] = self.BondPrice(r0, T)
+        
+        X = np.zeros((Nsims, Ndt+1))
+        X[:,0] = x0
+        
+        Z = np.zeros((Nsims, Ndt+1))
+        Z[:,0] = 1
+
+        W = np.zeros((Nsims,len(S0)+1))
+        
+        rho_inv = np.linalg.inv(rho)
+        
+        mpr = np.zeros((Nsims,len(S0)+1))
+        
+        for i in range(Ndt) :
+            
+            
+            # compute the market-price-of-risk
+            eff_vol = sigma * S[:,i,:len(S0)]**beta
+            mpr[:,:len(S0)] = ((self.params["P"]["mu"].reshape(1,-1) -r[:,i].reshape(-1,1) )/(eff_vol))
+            mpr[:,-1] = (a0 - a1 * r[:,i])/sigma_r
+            
+            mpr = mpr @ rho_inv            
+            
+            
+            # determine Brownian motions...
+            dW = sqrt_dt*np.random.multivariate_normal(np.zeros(len(S0)+1), rho, Nsims)
+            if measure == "Q":
+                dW -= (mpr @ rho) * dt
+            W += dW
+            
+            # update interest rate
+            r[:,i+1] = theta_r + (r[:,i]-theta_r)*np.exp(-kappa*dt) + sigma_r_eff*dW[:,-1]
+
+            # update risky assets (excluding the bond)
+            S[:, i+1,:len(S0)] = S[:,i,:len(S0)] * np.exp( (mu - 0.5 * eff_vol**2)*dt + eff_vol * dW[:,:len(S0)])
+            
+            # update the bond
+            S[:, i+1,-1] = self.BondPrice(r[:,i+1], T-t[i+1])
+            
+            # update the SDF
+            Lambda = np.sum(mpr * (rho @ mpr.T).T, axis=1)
+            Z[:,i+1] = Z[:,i]* np.exp( -(r[:,i]+0.5*Lambda)*dt - np.sum(dW* mpr, axis=1 ) )
+
+            # update the portfolio value
+            
+            # compute effective volatilities with portfolio positions
+            B = (1-np.exp(-kappa*(T-t[i])))/kappa
+            pi_eff_vol = pi*np.concatenate((eff_vol, -sigma_r*B*np.ones((Nsims,1))), axis=1 )
+            
+            # convexity correction term from Ito's lemma
+            upsilon =  np.sum(pi_eff_vol * (rho @ pi_eff_vol.T).T, axis=1)
+            
+            bond_drift = r[:,i] - B*(a0-a1*r[:,i])
+            mu_all = np.concatenate((mu * np.ones((Nsims,1)), bond_drift.reshape(-1,1)), axis=1)
+            
+            X[:,i+1] = X[:,i]* np.exp( ( r[:,i] + np.sum(pi * (mu_all-r[:,i].reshape(-1,1)), axis=1) \
+                                        -0.5* upsilon)*dt + np.sum(pi_eff_vol * dW, axis=1) )
+            
+        return t, S, X, Z, W, r
+    
+    
+    def GenerateUniforms(self, X,Y): 
+        
+        np.seterr(all='ignore')
+        
+        h = lambda  X : 1.06 * np.std(X) * (len(X))**(-1/5)
+        
+        f = lambda x, X, h : np.sum(  norm.pdf((x.reshape(1,-1)-X.reshape(-1,1))/h)/h, axis=0 ) / len(X)         
+    
+        ecdf_X = ECDF(X)
+        ecdf_Y = ECDF(Y)
+        
+        # generate uniforms        
+        U_X = ecdf_X(X)
+        U_Y = ecdf_Y(Y)
+                    
+        # generate  G_{X|Y}(x|y) := P(X \le x | Y = y) using kernel densities
+        G = lambda x, y, X, Y, hx, hy : np.sum(  norm.cdf((x.reshape(1,-1)-X.reshape(-1,1))/hx) * norm.pdf((y.reshape(1,-1)-Y.reshape(-1,1))/hy)/hy, axis=0 ) / len(X) / f(y, Y, hy)
+        
+        U_X_tilde = G(X, Y, X, Y, h(X), h(Y))
+        
+        ecdf_U_X_tilde = ECDF(U_X_tilde)
+        U_X_tilde = ecdf_U_X_tilde(U_X_tilde)
+        
+        
+        return U_X, U_Y, U_X_tilde
+    
+    def integrate(self, f, u):
+    
+        return np.sum(0.5*(f[:-1]+f[1:])*np.diff(u))
+    
+    
+    def Create_a_b_grid(self, a, b, N):
+        
+        eps=0.002    
+        
+        u_eps = 10**(np.linspace(-10, np.log(eps)/np.log(10),30))-1e-11
+        u_eps_flip = np.flip(copy.deepcopy(u_eps)) 
+    
+        u1 = a + u_eps
+        u2 = np.linspace(a + eps, b - eps, N)
+        u3 = b - u_eps_flip
+        
+        return np.concatenate((u1,u2, u3))    
+        
+    
+    def Sim_Uniforms_Xi(self, params, Ndt, Nsims, u_grid, measure="P", copula="Gaussian"):
+        
+        display(Math(r"Simulating\quad X, Z..."))
+        _, _, X, Z, W,_ = self.Sim(Ndt, Nsims, measure)
+
+        X = X[:,-1]
+        Z = Z[:,-1] 
+        Z *= self.BondPrice(self.params["P"]["r0"], self.T) / np.mean(Z)
+        
+        c = (np.mean(X*Z) - self.x0)/self.BondPrice(self.params["P"]["r0"], self.T) 
+        
+        X -= c
+        
+        # estimate empirical distribution function of X and its inverse
+        
+        # bandwidth
+        h = lambda  X : 1.06 * np.std(X) * (len(X))**(-1/5)
+
+        min_X = np.min(X)
+        min_X -= np.abs(min_X)*0.01
+        max_X = np.max(X)
+        max_X += np.abs(max_X)*0.01
+        
+        ECDF_X = ECDF(X)
+        
+        self.invF_P = np.zeros(len(u_grid))
+        for i in range(len(u_grid)):
+            
+            self.invF_P[i] = optimize.root_scalar(lambda x : (ECDF_X(x) - u_grid[i]), \
+                                  method='Brentq', bracket=[min_X,max_X]).root
+                
+        X = np.log( X.reshape(-1) )
+        Z = np.log( Z.reshape(-1) )
+
+        display(Math(r'Generating\quad U_X, \tilde{U}_Z...'))
+        U_Z, U_X, U_Z_X = self.GenerateUniforms(Z, X)        
+        
+        # generate V
+        display(Math(r"generating \quad V..."))
+        
+        if copula == "Gaussian":
+            print("Gaussian")
+            
+            p = params["p"]
+            V = norm.cdf(  p * norm.ppf(U_X) + np.sqrt(1-p**2)* norm.ppf( 1 - U_Z_X ) )
+            
+        elif copula == "CoIn":
+            print("CoIn")
+            
+            if params["us"] > 0:
+                V = (1-U_Z_X) * params["us"] * (U_X <= params["us"]) + U_X * (U_X > params["us"]) * (1- U_Z_X > 0)
+            else:
+                V = U_X
+                    
+            
+        elif copula == "Gumbel":
+            
+            print("Gumbel")
+            a = params["zeta"]
+            
+            psi_inv = ( - np.log(U_X) )**a
+            psi_dot_psi_inv = -psi_inv**(1/a-1) /a * U_X
+            
+            y = (1-U_Z_X) * psi_dot_psi_inv 
+            psi_dot_inv = ((a-1) * lambertw(  (-a* y)**(1/(1-a)) / (a-1) ) )**a
+          
+            V = np.real(np.exp(-(psi_dot_inv - psi_inv )**(1/a) ))
+            
+        elif copula == "All":
+
+            ecdf_Z = ECDF(np.exp(Z))
+            
+            V = 1 - ecdf_Z(np.exp(Z))
+
+
+        ecdf_V = ECDF(V)
+        V = ecdf_V(V)
+        
+        
+        # compute Q-density
+        
+        display(Math(r"generating \quad \xi(u)..."))
+        
+        # transform V to Y = log(V/(1-V)) then compute Y's Q-density, 
+        # then transform back to V
+        
+        mask = ~((V==0) | (V==1))
+        Y = np.log(V[mask]/(1-V[mask]))
+        
+        # w = \varsigma_T / E[ \varsigma_T ]
+        w = (np.exp(Z) / np.mean(np.exp(Z)))[mask]
+        
+
+        
+        # KDE estimator for *any* input data X, and sampling points x
+        f = lambda x, X, h : np.sum(  norm.pdf((x.reshape(1,-1)-X.reshape(-1,1))/h)/h, axis=0 ) / len(X) 
+        
+        # Q-KDE estimator for *any* input data Y, and sampling points y, needs dQ/dP weights w
+        f_Q = lambda  y, Y, w, h  : np.sum( w.reshape(-1,1) * norm.pdf( (y.reshape(1,-1) - Y.reshape(-1,1))/h )/h, axis=0 ) / len(Y) 
+        
+        Y_qtl = np.quantile(Y,[0.01,0.99])
+        
+        h_Y = h(Y[(Y>=Y_qtl[0]) & (Y<=Y_qtl[1])])/4
+
+        f_Y = lambda y : f(y, Y, h_Y)
+        f_Y_Q = lambda y : f_Q(y, Y, w, h_Y)
+        
+        f_V = lambda v : f_Y(np.log(v/(1-v))) / (v*(1-v))
+        f_V_Q = lambda v : f_Y_Q(np.log(v/(1-v))) / (v*(1-v))
+
+   
+        y = np.linspace(-10,6,50)
+        
+        v = u_grid
+
+        # evaluate the P and Q-pdfs of V and normalize to integrate to one
+        f_V_eval = f_V(v)
+        f_V_eval /= self.integrate(f_V_eval, v)
+        
+        f_V_Q_eval = f_V_Q(v)
+        f_V_Q_eval /= self.integrate(f_V_Q_eval, v)
+        
+        self.u = v
+        self.xi = f_V_Q_eval * self.BondPrice(self.params["P"]["r0"], self.T) 
+        
+        return np.exp(X), np.exp(Z), U_X, U_Z, U_Z_X, V, v, f_V_eval, f_V_Q_eval    
+        
