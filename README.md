@@ -3,7 +3,7 @@ This is the code for implementing the results in the paper:
 Title: **Portfolio Optimisation within a Wasserstein Ball**    
 by    
 Silvana Pesenti and Sebastian Jaimungal    
-Department of Statistical Sciences    
+Department of Statistical Sciences
 University of Toronto
 
 Link to the paper: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3744994
